@@ -13,11 +13,8 @@ class Solution {
         val mapToSortedList = map.toList().sortedByDescending { it.second.values.sum() }
         // [(pop, {1=600, 4=2500}), (classic, {0=500, 2=150, 3=800})]
         mapToSortedList.forEach {
-            val playList = it.second.toList().sortedByDescending { play -> play.second }
-            answer.add(playList.first().first)
-            if (playList.size >= 2) {
-                answer.add(playList[1].first)
-            }
+            val playList = it.second.toList().sortedByDescending { play -> play.second }.take(2)
+            answer.addAll(playList.map { it.first })
         }
         return answer.toIntArray()
     }
