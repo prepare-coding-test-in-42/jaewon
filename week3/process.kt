@@ -3,25 +3,21 @@ import java.util.ArrayDeque
 class Solution {
     fun solution(priorities: IntArray, location: Int): Int {
         var answer = 0
-        val updatePrior = priorities.toMutableList()
         val queue = ArrayDeque(
             List(priorities.size) {
                 priorities[it] to it
             }
         )
-        while (queue.firstOrNull() != null) {
+        while (queue.isNotEmpty()) {
             val front = queue.pollFirst()
-            val temp = updatePrior.removeFirst()
-            if (updatePrior.maxOrNull() == null)
+            if (queue.isEmpty())
                 return priorities.size
-            if (front.first < updatePrior.maxOrNull()!!) {
+            if (front.first < queue.maxOf { it.first })
                 queue.offer(front)
-                updatePrior.add(temp)
-            } else if (front.second == location) {
+            else if (front.second == location)
                 return answer + 1
-            } else {
+            else
                 answer++
-            }
         }
         return answer
     }
