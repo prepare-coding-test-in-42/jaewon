@@ -10,22 +10,24 @@ class Solution {
             }
         }
         // 작업번호, 요청시각, 소요시간
-        waitingQueue.addAll(
-            jobs.mapIndexed { i, j ->
-                intArrayOf(i, j[0], j[1])
-            }
-        )
+        val sortedJobs = jobs.mapIndexed { i, j ->
+            intArrayOf(i, j[0], j[1])
+        }.sortedBy { it[1] }
 
         // 종료시각 = 시작시간 + 소요시간
         var now = 0
-        var ingProcess = intArrayOf()
+        var isProcessing = false
         val processStartTimeList = mutableListOf<Pair<Int, IntArray>>()
-        while (waitingQueue.isNotEmpty()) {
+        while (processStartTimeList.size != jobs.size) {
+            sortedJobs.forEach {
+                if (it[1] == now)
+                    waitingQueue.add(it)
+            }
             if (processStartTimeList.isNotEmpty() && now - processStartTimeList.last().first >= processStartTimeList.last().second[2])
-                ingProcess = intArrayOf()
-            if (ingProcess.isEmpty() && waitingQueue.first()[1] <= now) {
-                ingProcess = waitingQueue.poll()
-                processStartTimeList.add(now to ingProcess)
+                isProcessing = false
+            if (!isProcessing && waitingQueue.isNotEmpty()) {
+                processStartTimeList.add(now to waitingQueue.poll())
+                isProcessing = true
             }
             now++
         }
@@ -35,5 +37,3 @@ class Solution {
         }.average().toInt()
     }
 }
-// 1시간
-println(Solution().solution(arrayOf(intArrayOf(0, 3), intArrayOf(1, 9), intArrayOf(3, 5))))
