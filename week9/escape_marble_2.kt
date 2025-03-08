@@ -66,7 +66,7 @@ fun main() {
     queue.add(listOf(rx, ry, bx, by) to 0)
     while (queue.isNotEmpty()) {
         val (front, depth) = queue.removeFirst()
-        if (depth > 10) {
+        if (depth + 1 > 10) {
             print(-1)
             break
         }
