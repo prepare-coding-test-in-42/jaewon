@@ -6,9 +6,7 @@ fun main() {
 
     val dx = listOf(0, 0, -1, 1)
     val dy = listOf(-1, 1, 0, 0)
-    var visited = map.map {
-        BooleanArray(it.size)
-    }.toTypedArray()
+    var visited = arrayOf<BooleanArray>()
 
     fun dfs(i: Int, j: Int): Pair<List<Pair<Int, Int>>, Boolean> {
         var route = listOf(i to j)
@@ -56,5 +54,5 @@ fun main() {
         if (move)
             answer++
     }
-    print(answer) // 1시간 반
+    print(answer)
 }
