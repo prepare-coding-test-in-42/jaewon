@@ -9,7 +9,7 @@ fun main() {
         readln().split(" ").map { it.toInt() - 1}
     }
     var map = List(n) {
-        List<Pair<Int, MutableList<Int>>>(n) { 5 to mutableListOf<Int>() }
+        MutableList<Pair<Int, MutableList<Int>>>(n) { 5 to mutableListOf<Int>() }
     }
     trees.forEach { (x, y, age) ->
         map[x][y].second.add(age + 1)
@@ -22,24 +22,28 @@ fun main() {
 
     fun spring(nour: Int, ages: MutableList<Int>): Pair<Int, MutableList<Int>> {
         var nr = nour
-        var a = ages
-        for (i in a.indices) {
-            if (nr - a[i] < 0) {
-                a[i] *= -1
+        for (i in ages.indices) {
+            if (nr - ages[i] < 0) {
+                ages[i] *= -1
                 continue
             }
-            nr -= a[i]
-            a[i]++
+            nr -= ages[i]
+            ages[i]++
         }
-        return nr to a
+        return nr to ages
     }
     fun summer(nour: Int, ages: MutableList<Int>): Pair<Int, MutableList<Int>> {
         var nr = nour
-        ages.filter { it < 0 }.forEach {
-            nr += it * -1 / 2
+        val alive = mutableListOf<Int>()
+        for (age in ages) {
+            if (age < 0)
+                nr += age * -1 / 2
+            else
+                alive.add(age)
         }
-        return nr to ages.filter { it >= 0 }.toMutableList()
+        return nr to alive
     }
+
     fun fall(i: Int, j: Int, ages: MutableList<Int>) {
         val drdcs = listOf(-1 to -1, -1 to 0, -1 to +1, 0 to -1, 0 to +1, +1 to -1, +1 to 0, +1 to +1)
         ages.forEach {
@@ -48,37 +52,37 @@ fun main() {
                     val adjr = i + dr
                     val adjc = j + dc
                     if (adjr in map.indices && adjc in map.indices)
-                        map[adjr][adjc].second.add(1)
+                        map[adjr][adjc].second.add(0, 1)
                 }
             }
         }
     }
     repeat(k) {
-        map = map.map {
-            it.map {
-                spring(it.first, it.second)
+        for (i in map.indices) {
+            for (j in map[i].indices) {
+                map[i][j] = spring(map[i][j].first, map[i][j].second)
             }
         }
-        map = map.map {
-            it.map {
-                summer(it.first, it.second)
+        for (i in map.indices) {
+            for (j in map[i].indices) {
+                map[i][j] = summer(map[i][j].first, map[i][j].second)
             }
         }
-        map.forEachIndexed { i, it ->
-            it.forEachIndexed { j, jt ->
-                fall(i, j, jt.second)
+        for (i in map.indices) {
+            for (j in map[i].indices) {
+                fall(i, j, map[i][j].second)
             }
         }
-        map = map.mapIndexed { i, it ->
-            it.mapIndexed { j, jt ->
-                jt.first + nourishment[i][j] to jt.second
+        for (i in map.indices) {
+            for (j in map[i].indices) {
+                map[i][j] = map[i][j].first + nourishment[i][j] to map[i][j].second
             }
         }
     }
     print(
         map.sumOf {
             it.sumOf {
-                it.second.count { it >= 0}
+                it.second.size
             }
         }
     )
