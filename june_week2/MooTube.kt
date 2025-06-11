@@ -23,7 +23,7 @@ fun main() {
         visited[v] = true
         
         while (queue.isNotEmpty()) {
-            val front = queue.first()
+            val front = queue.removeFirst()
             graph[front].forEach { (next, usado) ->
                 if (!visited[next]) {
                     visited[next] = true
