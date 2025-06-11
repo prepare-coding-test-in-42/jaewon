@@ -24,13 +24,15 @@ fun main() {
     val dp = Array(100) { Pair(0, 0) }
     dp[0] = Pair(0, 6)
 
-    for (i in 1 until 100) {
+    var i = 1
+    while (i < 100) {
         if (dp[i-1].second == 6) {
             dp[i] = Pair(dp[i-1].first + 1, 1)
         } else {
             dp[i] = Pair(dp[i-1].first, dp[i-1].second + 1)
         }
 
+        // 사다리 확인
         for (ladder in ladders) {
             if (ladder[1] == i) {
                 val from = ladder[0]
@@ -39,7 +41,20 @@ fun main() {
                 }
             }
         }
-    }
 
+        // 뱀 확인
+        var shouldRestart = false
+        for (snake in snakes) {
+            if (snake[0] == i) {
+                val to = snake[1]
+                if (dp[i].first < dp[to].first) {
+                    dp[to] = Pair(dp[i].first, 6)
+                    i = to + 1
+                    shouldRestart = true
+                }
+            }
+        }
+        if (!shouldRestart) i++
+    }
     println(dp[99].first)
 }
